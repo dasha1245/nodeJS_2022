@@ -14,8 +14,8 @@ module.exports = {
         }
     },
     createPairTokens: (dataToSign) => {
-        const accessToken = jwt.sign(dataToSign, envDefConfigs.ACCESS_SECRET, {expiresIn: '5s'});
-        const refreshToken = jwt.sign(dataToSign, envDefConfigs.REFRESH_SECRET, {expiresIn: '10s'});
+        const accessToken = jwt.sign(dataToSign, envDefConfigs.ACCESS_SECRET, {expiresIn: '15m'});
+        const refreshToken = jwt.sign(dataToSign, envDefConfigs.REFRESH_SECRET, {expiresIn: '30m'});
         return {
             accessToken,
             refreshToken
@@ -32,8 +32,12 @@ module.exports = {
         const searchedInfo = await authDataBase.findOne(filter)
         return searchedInfo
     },
-    deleteTokensPair: async function (refreshToken) {
-        return authDataBase.deleteOne({refreshToken})
+
+    deleteTokensPair: async function (token) {
+        return authDataBase.deleteOne({token})
+    },
+    deleteAllTokensPair: async function (userId) {
+        return authDataBase.deleteMany({userId})
     },
 
     checkTokens: async (token = '', tokenType = 'accessToken') => {
@@ -49,6 +53,7 @@ module.exports = {
                 await authDataBase.deleteOne({refreshToken: token})
                 throw new ApiError('Refresh token is not valid', 401)
             }
+
             throw new ApiError('Access token is not valid', 401)
         }
 

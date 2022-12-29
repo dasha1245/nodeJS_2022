@@ -7,8 +7,10 @@ router.post(
     '/login',
     authMiddleware.isBodyValid,
     userMiddleware.getUserDynamically('email', 'body'),
-    authController.login)
+    authController.login);
 
-router.post('/refresh', authMiddleware.checkRefreshToken, authController.refresh)
+router.post('/refresh', authMiddleware.checkRefreshToken, authController.refresh);
+router.post('/logout', authMiddleware.checkAccessToken, authController.logout);
+router.post('/logoutAll', authMiddleware.checkAccessToken, authController.logoutAll);
 
 module.exports = router;

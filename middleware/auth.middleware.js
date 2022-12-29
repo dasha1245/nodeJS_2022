@@ -23,12 +23,14 @@ module.exports = {
             if(!accessToken) {
                 throw new ApiError('Access token is required', 401)
             }
-            authService.checkTokens(accessToken)
+            await authService.checkTokens(accessToken)
 
             const tokenInfo = await authService.findOneByParams({accessToken})
             if(!tokenInfo){
                 throw new ApiError('Access token is not valid', 401)
             }
+
+            req.tokenInfo = tokenInfo
             next()
         } catch (e) {
             next(e)
