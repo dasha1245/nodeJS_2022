@@ -26,7 +26,7 @@ const sendMail = async (receiver, emailAction, locals = {}) => {
             root: path.join(process.cwd(), 'emailTemplates')
         }
     })
-    const html = await templateRender.render(templateInfo.templateName, locals)
+    const html = await templateRender.render(templateInfo.templateName, locals={})
 
     return transporter.sendMail({
         from: 'No-reply email.',

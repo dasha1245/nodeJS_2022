@@ -10,7 +10,14 @@ router.post(
     authController.login);
 
 router.post('/refresh', authMiddleware.checkRefreshToken, authController.refresh);
+
 router.post('/logout', authMiddleware.checkAccessToken, authController.logout);
 router.post('/logoutAll', authMiddleware.checkAccessToken, authController.logoutAll);
+
+router.post(
+    '/password/forgot',
+    userMiddleware.getUserDynamically('email', 'body'),
+    authController.forgotPassword
+)
 
 module.exports = router;

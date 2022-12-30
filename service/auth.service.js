@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const ApiError = require("../error/apiError");
+const {envDefConfigs, tokenActions} = require('../config')
 const {authDataBase} = require('../dataBase')
-const {envDefConfigs} = require('../config')
+const ApiError = require("../error/apiError");
 
 module.exports = {
     hashPassword: (password) => bcrypt.hash(password, 10),
@@ -21,6 +21,20 @@ module.exports = {
             refreshToken
         }
     },
+    createActionToken: (actionType, dataToSign) => {
+        let secret = '';
+
+        switch (actionType){
+            case tokenActions.FORGOT_PASSWORD:
+                secret = envDefConfigs.FORGOT_PASSWORD_ACTION_TOKEN_SECRET
+                break
+        }
+
+        const actionToken = jwt.sign(dataToSign, secret, {expiresIn: '7d'});
+
+        return actionToken
+    },
+
     insertTokensToDB: async (newData) => {
         const insertedData = await authDataBase.create(newData);
 
