@@ -1,9 +1,10 @@
-const {authValidator} = require('../validator')
+const {tokenActions} = require('../config');
 const ApiError = require("../error/apiError");
-const {authService} = require("../service");
+const {authService, forgotPassService} = require("../service");
+const {authValidator, forgPassValidator} = require('../validator');
 
 module.exports = {
-    isBodyValid: async (req, res, next) => {
+    isLoginBodyValid: async (req, res, next) => {
         try {
             const validate = await authValidator.loginValidator.validate(req.body)
 
@@ -16,6 +17,21 @@ module.exports = {
             next(e)
         }
     },
+
+    isForgotPassBodyValid: async (req, res, next) => {
+        try {
+            const validate = await forgPassValidator.validate(req.body)
+
+            if(validate.error){
+                throw new ApiError(validate.error.message, 400)
+            }
+
+            next()
+        } catch (e) {
+            next(e)
+        }
+    },
+
     checkAccessToken: async (req, res, next) => {
         try {
             const accessToken = req.get('Authorization')
@@ -36,6 +52,7 @@ module.exports = {
             next(e)
         }
     },
+
     checkRefreshToken: async (req, res, next) => {
         try {
             const refreshToken = req.get('Authorization')
@@ -47,6 +64,8 @@ module.exports = {
 
             const tokenInfo = await authService.findOneByParams({refreshToken})
 
+            console.log(tokenInfo);
+
             if(!tokenInfo){
                 throw new ApiError('Refresh token is not valid', 401)
             }
@@ -57,5 +76,29 @@ module.exports = {
         } catch (e) {
             next(e)
         }
-    }
+    },
+
+    checkActionToken: async (req, res, next) => {
+        try {
+            const actionToken = req.get('Authorization')
+
+            if(!actionToken){
+                throw new ApiError('Action token is required', 401)
+            }
+
+            await forgotPassService.checkActionToken(actionToken, tokenActions.FORGOT_PASSWORD)
+
+            const tokenInfo = await forgotPassService.findTokenInDB({token: actionToken, tokenType: tokenActions.FORGOT_PASSWORD})
+
+            if(!tokenInfo){
+                throw new ApiError('Action token is not valid', 401)
+            }
+
+            req.user = tokenInfo._user_id
+            next()
+
+        } catch (e) {
+            next(e)
+        }
+    },
 }

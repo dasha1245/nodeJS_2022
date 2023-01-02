@@ -1,6 +1,6 @@
-
-const {authService, emailService} = require('../service')
+const {authService, emailService, userService, forgotPassService} = require('../service')
 const {tokenActions, emailActions, envDefConfigs} = require('../config')
+const {userDataBase} = require('../dataBase')
 
 module.exports = {
     login: async (req, res, next) => {
@@ -12,7 +12,7 @@ module.exports = {
 
             const tokenPair = authService.createPairTokens({id: user._id});
 
-            const insertedData = await authService.insertTokensToDB({...tokenPair, _user_id: user._id})
+            const insertedData = await authService.insertPairTokensToDB({...tokenPair, _user_id: user._id})
 
 
             res.json(insertedData)
@@ -30,7 +30,7 @@ module.exports = {
 
             const tokenPair = authService.createPairTokens({id: _user_id})
 
-            const insertedData = await authService.insertTokensToDB({...tokenPair, _user_id})
+            const insertedData = await authService.insertPairTokensToDB({...tokenPair, _user_id})
             res.json(insertedData)
 
         } catch (e) {
@@ -65,14 +65,33 @@ module.exports = {
         try {
             const user = req.user
 
-            const actionToken = await authService.createActionToken(tokenActions.FORGOT_PASSWORD, {userId: user.email})
+            const actionToken = await forgotPassService.createActionToken(tokenActions.FORGOT_PASSWORD, {userId: user.email});
 
-            const forgotPassFEUrl = `https://google.com/password/forgot?token=${actionToken}`
+            await forgotPassService.insertActionTokensToDB({token: actionToken, _user_id: user._id, tokenType: tokenActions.FORGOT_PASSWORD})
 
-                //без цього рядка все ок, лист на велкам проходить
-            await emailService.sendMail('daria.cherkasova.sr.2021@lpnu.ua', emailActions.FORGOT_PASS, {url: forgotPassFEUrl})
+            const forgotPassFEUrl = `${envDefConfigs.FRONTEND_URL}/password/forgot?token=${actionToken}`
 
-            res.json('ok')
+            await emailService.sendMail(user.email, emailActions.FORGOT_PASS, {userName: user.name, url: forgotPassFEUrl})
+
+            res.json({
+                actionToken: actionToken
+            })
+        } catch (e) {
+            next(e)
+        }
+    },
+
+    setPasswordAfterForgot: async (req, res, next) => {
+        try {
+            const user = req.user
+
+            const hashPassword = await authService.hashPassword(req.body.password);
+
+             await userService.updateUser(user._id, {password: hashPassword})
+
+            await forgotPassService.deleteActionToken(req.get('Authorization'))
+
+            res.json('Success')
         } catch (e) {
             next(e)
         }

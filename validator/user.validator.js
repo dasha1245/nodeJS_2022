@@ -10,7 +10,7 @@ module.exports = {
         password: Joi.string().required().regex(regexp.PASSWORD)
     }),
     editUserValidator: Joi.object({
-        name: Joi.string().min(2).max(25).optional().default(''),
+        name: Joi.string().min(2).max(25).optional(),
         age: Joi.number().min(1).max(120).integer().optional(),
         email: Joi.string().trim().optional().lowercase().regex(regexp.EMAIL)
     })

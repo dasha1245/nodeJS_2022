@@ -1,4 +1,4 @@
 module.exports = {
-    CONFIRM_ACCOUNT: 'CFRMACC',
-    FORGOT_PASSWORD: 'FGTPSS'
+    CONFIRM_ACCOUNT: 'Confirm account',
+    FORGOT_PASSWORD: 'Forgot password'
 }

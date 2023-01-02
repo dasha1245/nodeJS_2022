@@ -6,6 +6,6 @@ module.exports = {
     },
     [emailActions.FORGOT_PASS]: {
         subject: 'Dont worry, be happy :)',
-        templateNae: 'forgotPass'
+        templateName: 'forgotPass'
     }
 }

@@ -5,7 +5,7 @@ const {authMiddleware, userMiddleware} = require('../middleware');
 
 router.post(
     '/login',
-    authMiddleware.isBodyValid,
+    authMiddleware.isLoginBodyValid,
     userMiddleware.getUserDynamically('email', 'body'),
     authController.login);
 
@@ -18,6 +18,12 @@ router.post(
     '/password/forgot',
     userMiddleware.getUserDynamically('email', 'body'),
     authController.forgotPassword
-)
+);
+router.put(
+    '/password/forgot',
+    authMiddleware.isForgotPassBodyValid,
+    authMiddleware.checkActionToken,
+    authController.setPasswordAfterForgot
+);
 
 module.exports = router;

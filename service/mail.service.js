@@ -1,13 +1,15 @@
-const EmailTemplates = require('email-templates');
+// const EmailTemplates = require('email-templates');
 const nodemailer = require('nodemailer');
-const path = require('path')
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 
-const {envDefConfigs} = require('../config')
+const {envDefConfigs} = require('../config');
+const emailTemplates = require('../emailTemplates');
 const ApiError = require("../error/apiError");
-const emailTemplates = require('../emailTemplates')
 
-const sendMail = async (receiver, emailAction, locals = {}) => {
+const sendMail = async (receiver, emailAction, context = {}) => {
     const transporter = nodemailer.createTransport({
+        from: 'No-reply email.',
         service: 'gmail',
         auth: {
             user: envDefConfigs.NO_REPLY_EMAIL, //no-replay mail sender
@@ -15,25 +17,33 @@ const sendMail = async (receiver, emailAction, locals = {}) => {
         }
     });
 
-    const templateInfo = emailTemplates[emailAction]
+    const templateInfo = emailTemplates[emailAction];
 
     if (!templateInfo) {
         throw new ApiError('No template', 500)
     }
 
-    const templateRender = new EmailTemplates({
-        views: {
-            root: path.join(process.cwd(), 'emailTemplates')
-        }
-    })
-    const html = await templateRender.render(templateInfo.templateName, locals={})
+    const options = {
+        viewEngine: {
+            defaultLayout: 'main',
+            layoutsDir: path.join(process.cwd(), 'emailTemplates', 'layout'),
+            partialsDir: path.join(process.cwd(), 'emailTemplates', 'partial'),
+            extname: '.hbs',
+        },
+        extName: '.hbs',
+        viewPath: path.join(process.cwd(), 'emailTemplates', 'view'),
+    };
+
+    console.log(options.viewPath);
+
+    transporter.use('compile', hbs(options));
 
     return transporter.sendMail({
-        from: 'No-reply email.',
         to: receiver, //receiver email
         subject: templateInfo.subject,
-        html
+        template: templateInfo.templateName,
+        context
     })
-}
+};
 
 module.exports = {sendMail}

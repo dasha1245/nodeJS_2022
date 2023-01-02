@@ -1,18 +1,20 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const {envDefConfigs, tokenActions} = require('../config')
+const {envDefConfigs} = require('../config')
 const {authDataBase} = require('../dataBase')
 const ApiError = require("../error/apiError");
 
 module.exports = {
     hashPassword: (password) => bcrypt.hash(password, 10),
+
     comparePasswords: async (hashPassword, password) => {
         const isPasswordSame = await bcrypt.compare(password, hashPassword);
         if (!isPasswordSame) {
             throw new ApiError('Wrong email or password.', 400)
         }
     },
+
     createPairTokens: (dataToSign) => {
         const accessToken = jwt.sign(dataToSign, envDefConfigs.ACCESS_SECRET, {expiresIn: '15m'});
         const refreshToken = jwt.sign(dataToSign, envDefConfigs.REFRESH_SECRET, {expiresIn: '30m'});
@@ -21,36 +23,21 @@ module.exports = {
             refreshToken
         }
     },
-    createActionToken: (actionType, dataToSign) => {
-        let secret = '';
 
-        switch (actionType){
-            case tokenActions.FORGOT_PASSWORD:
-                secret = envDefConfigs.FORGOT_PASSWORD_ACTION_TOKEN_SECRET
-                break
-        }
-
-        const actionToken = jwt.sign(dataToSign, secret, {expiresIn: '7d'});
-
-        return actionToken
+    insertPairTokensToDB:  (newData) => {
+        return authDataBase.create(newData);
     },
 
-    insertTokensToDB: async (newData) => {
-        const insertedData = await authDataBase.create(newData);
+    findOneByParams:  (filter = {}) => {
+        return authDataBase.findOne(filter)
 
-        return insertedData
     },
 
-
-    findOneByParams: async (filter = {}) => {
-        const searchedInfo = await authDataBase.findOne(filter)
-        return searchedInfo
-    },
-
-    deleteTokensPair: async function (token) {
+    deleteTokensPair:  (token) => {
         return authDataBase.deleteOne({token})
     },
-    deleteAllTokensPair: async function (userId) {
+
+    deleteAllTokensPair:  (userId) => {
         return authDataBase.deleteMany({userId})
     },
 
