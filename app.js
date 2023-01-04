@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const {envDefConfigs} = require('./config')
 const {userRouter, authRouter} = require('./router')
+const {cronRunner} = require('./cron')
 
 const app = express();
 
@@ -23,4 +24,5 @@ app.use((err, req, res, next) => {
 app.listen(envDefConfigs.PORT, async () => {
     await mongoose.connect(envDefConfigs.DB_URL)
     console.log(`Server is on ${envDefConfigs.PORT} port`)
+    cronRunner()
 });

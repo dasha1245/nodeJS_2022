@@ -16,8 +16,8 @@ module.exports = {
     },
 
     createPairTokens: (dataToSign) => {
-        const accessToken = jwt.sign(dataToSign, envDefConfigs.ACCESS_SECRET, {expiresIn: '15m'});
-        const refreshToken = jwt.sign(dataToSign, envDefConfigs.REFRESH_SECRET, {expiresIn: '30m'});
+        const accessToken = jwt.sign(dataToSign, envDefConfigs.ACCESS_SECRET, {expiresIn: '30m'});
+        const refreshToken = jwt.sign(dataToSign, envDefConfigs.REFRESH_SECRET, {expiresIn: '1h'});
         return {
             accessToken,
             refreshToken
@@ -37,8 +37,8 @@ module.exports = {
         return authDataBase.deleteOne({token})
     },
 
-    deleteAllTokensPair:  (userId) => {
-        return authDataBase.deleteMany({userId})
+    deleteAllTokensPair:  (filter = {}) => {
+        return authDataBase.deleteMany(filter)
     },
 
     checkTokens: async (token = '', tokenType = 'accessToken') => {

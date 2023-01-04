@@ -53,7 +53,7 @@ module.exports = {
     logoutAll: async (req, res, next) => {
         try {
             const {_user_id} = req.tokenInfo
-            await authService.deleteAllTokensPair(_user_id)
+            await authService.deleteAllTokensPair({_user_id})
 
             res.sendStatus(204)
         } catch (e) {

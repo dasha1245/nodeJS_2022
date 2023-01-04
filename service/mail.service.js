@@ -34,8 +34,6 @@ const sendMail = async (receiver, emailAction, context = {}) => {
         viewPath: path.join(process.cwd(), 'emailTemplates', 'view'),
     };
 
-    console.log(options.viewPath);
-
     transporter.use('compile', hbs(options));
 
     return transporter.sendMail({
