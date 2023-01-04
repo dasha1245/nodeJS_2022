@@ -1,19 +1,28 @@
 const emailActions = require('../config/email.actions');
 const envDefConfigs = require('../config/env.config');
+const smsAction = require('../config/sms.action');
 const tokenActions = require('../config/token.action');
+const smsTemplate = require('../helper/smsTemplate.helper')
 const authService = require('../service/auth.service');
-const emailService = require('../service/mail.service');
 const forgotPassService = require('../service/forgotPass.service');
+const emailService = require('../service/mail.service');
+const smsService = require('../service/sms.service');
 const userService = require('../service/user.service');
 
 module.exports = {
     login: async (req, res, next) => {
         try {
             const {user, body} = req
-            // await authService.comparePasswords(user.password, body.password)
 
             await user.comparePasswords(body.password)
-            // await emailService.sendMail('daria.cherkasova.sr.2021@lpnu.ua', emailActions.WELCOME, {userName: user.name})
+
+            // email and sms after login
+
+            // await Promise.allSettled([
+            //     emailService.sendMail('someone email', emailActions.WELCOME, {userName: user.name}),
+            //     smsService.sendSms(smsTemplate[smsAction.WELCOMING](user.name))
+            // ])
+
 
             const tokenPair = authService.createPairTokens({id: user._id});
 
