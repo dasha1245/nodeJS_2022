@@ -1,14 +1,19 @@
-const {authService, emailService, userService, forgotPassService} = require('../service')
-const {tokenActions, emailActions, envDefConfigs} = require('../config')
-const {userDataBase} = require('../dataBase')
+const emailActions = require('../config/email.actions');
+const envDefConfigs = require('../config/env.config');
+const tokenActions = require('../config/token.action');
+const authService = require('../service/auth.service');
+const emailService = require('../service/mail.service');
+const forgotPassService = require('../service/forgotPass.service');
+const userService = require('../service/user.service');
 
 module.exports = {
     login: async (req, res, next) => {
         try {
             const {user, body} = req
-            await authService.comparePasswords(user.password, body.password)
+            // await authService.comparePasswords(user.password, body.password)
 
-            await emailService.sendMail('daria.cherkasova.sr.2021@lpnu.ua', emailActions.WELCOME, {userName: user.name})
+            await user.comparePasswords(body.password)
+            // await emailService.sendMail('daria.cherkasova.sr.2021@lpnu.ua', emailActions.WELCOME, {userName: user.name})
 
             const tokenPair = authService.createPairTokens({id: user._id});
 
@@ -67,11 +72,18 @@ module.exports = {
 
             const actionToken = await forgotPassService.createActionToken(tokenActions.FORGOT_PASSWORD, {userId: user.email});
 
-            await forgotPassService.insertActionTokensToDB({token: actionToken, _user_id: user._id, tokenType: tokenActions.FORGOT_PASSWORD})
+            await forgotPassService.insertActionTokensToDB({
+                token: actionToken,
+                _user_id: user._id,
+                tokenType: tokenActions.FORGOT_PASSWORD
+            })
 
             const forgotPassFEUrl = `${envDefConfigs.FRONTEND_URL}/password/forgot?token=${actionToken}`
 
-            await emailService.sendMail(user.email, emailActions.FORGOT_PASS, {userName: user.name, url: forgotPassFEUrl})
+            await emailService.sendMail(user.email, emailActions.FORGOT_PASS, {
+                userName: user.name,
+                url: forgotPassFEUrl
+            })
 
             res.json({
                 actionToken: actionToken
@@ -87,7 +99,7 @@ module.exports = {
 
             const hashPassword = await authService.hashPassword(req.body.password);
 
-             await userService.updateUser(user._id, {password: hashPassword})
+            await userService.updateUser(user._id, {password: hashPassword})
 
             await forgotPassService.deleteActionToken(req.get('Authorization'))
 

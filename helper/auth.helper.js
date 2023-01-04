@@ -1,4 +1,5 @@
-const {tokenActions, envDefConfigs} = require("../config");
+const envDefConfigs = require("../config/env.config");
+const tokenActions = require("../config/token.action");
 
 module.exports = {
 

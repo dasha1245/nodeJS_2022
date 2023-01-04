@@ -1,6 +1,7 @@
 const ApiError = require('../error/apiError');
-const {userService} = require('../service');
-const {commonValidator, userValidator} = require('../validator')
+const userService = require('../service/user.service');
+const commonValidator = require('../validator/common.validator');
+const userValidator = require('../validator/user.validator');
 
 module.exports = {
     getUserDynamically: (fieldName, from, dbFieldName = fieldName) => async (req, res, next) => {

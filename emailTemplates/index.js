@@ -1,4 +1,4 @@
-const {emailActions} = require('../config')
+const emailActions = require('../config/email.actions')
 module.exports = {
     [emailActions.WELCOME]: {
         subject: 'Welcome to our team!',

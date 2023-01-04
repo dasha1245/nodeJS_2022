@@ -1,4 +1,4 @@
-const {userDataBase} = require('../dataBase');
+const userDataBase = require('../dataBase/user.dataBase');
 
 module.exports = {
     getAllByParams: async (filter  = {}) => {
@@ -11,8 +11,8 @@ module.exports = {
 
     },
 
-    createNewUser: async (userInfo) => {
-        return userDataBase.create(userInfo);
+    createNewUser: async (userInfo ='') => {
+        return userDataBase.createWithHashPassword(userInfo);
     },
 
     deleteUser: async (userId) => {

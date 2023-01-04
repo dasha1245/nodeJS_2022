@@ -1,0 +1,144 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "June-22"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "description": "Get all users",
+        "tags": ["User"],
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#definitions/SingleUser"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+             "$ref": "#definitions/APIError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create user",
+        "tags": ["User"],
+        "operationId": "createUser",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "age",
+            "in": "formData",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "OK"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/APIError"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "description": "Get user by ID",
+        "tags": ["User"],
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "accessToken",
+            "in": "header",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SingleUser"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/APIError"
+            }
+          }
+        }
+
+      }
+    }
+
+  },
+  "definitions": {
+    "SingleUser": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Dasha"
+        },
+        "age": {
+          "type": "integer",
+          "example": 19
+        },
+        "email": {
+          "type": "string",
+          "example": "dasha@gmail.com"
+        }
+      }
+    },
+    "APIError": {
+      "properties": {
+        "statusCode": {
+          "type": "number",
+          "example": 404
+        },
+        "message": {
+          "type": "string",
+          "example": "Page not found"
+        }
+      }
+    }
+  }
+}

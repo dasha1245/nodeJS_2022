@@ -2,12 +2,12 @@ const {CronJob} = require('cron');
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 
-const {authService} = require('../service')
+const authService = require('../service/auth.service')
 
 dayjs.extend(utc);
 
 module.exports = new CronJob(
-    '* */60 * * * *',
+    '0 0 * * * *',
     async function() {
         try {
             console.log('Starting removing')

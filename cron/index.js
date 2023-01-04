@@ -1,9 +1,10 @@
-const removeOldTokens = require('./removeOldTokens')
+const removeOldTokens = require('./removeOldTokens');
+
 
 const cronRunner = () => {
-    removeOldTokens.start()
-}
+    removeOldTokens.start();
+};
 
 module.exports = {
-    cronRunner
-}
+    cronRunner,
+};

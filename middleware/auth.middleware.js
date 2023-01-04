@@ -1,7 +1,9 @@
-const {tokenActions} = require('../config');
+const tokenActions = require('../config/token.action');
 const ApiError = require("../error/apiError");
-const {authService, forgotPassService} = require("../service");
-const {authValidator, forgPassValidator} = require('../validator');
+const authService = require("../service/auth.service");
+const forgotPassService = require("../service/forgotPass.service");
+const authValidator = require('../validator/auth.validator');
+const forgPassValidator = require('../validator/forgotPassword.validator');
 
 module.exports = {
     isLoginBodyValid: async (req, res, next) => {

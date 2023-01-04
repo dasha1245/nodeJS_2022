@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 
-const {forgotPassDB} = require("../dataBase");
+const forgotPassDB = require("../dataBase/forgotPassword.dataBase");
 const ApiError = require("../error/apiError");
-const {authHelper} = require("../helper");
+const authHelper = require("../helper/auth.helper");
 
 module.exports = {
     createActionToken: (actionType, dataToSign) => {

@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const {envDefConfigs} = require('../config')
-const {authDataBase} = require('../dataBase')
+const envDefConfigs = require('../config/env.config')
+const authDataBase = require('../dataBase/auth.dataBase')
 const ApiError = require("../error/apiError");
 
 module.exports = {

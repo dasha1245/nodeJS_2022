@@ -1,9 +1,8 @@
-// const EmailTemplates = require('email-templates');
 const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 
-const {envDefConfigs} = require('../config');
+const envDefConfigs = require('../config/env.config');
 const emailTemplates = require('../emailTemplates');
 const ApiError = require("../error/apiError");
 
