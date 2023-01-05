@@ -2,28 +2,48 @@ const router = require('express').Router();
 
 const userController = require('../controller/user.controller');
 const authMiddleware = require('../middleware/auth.middleware');
+const fileMdwr = require('../middleware/file.middleware');
 const userMiddleware = require('../middleware/user.middleware');
 
 
 router.get('/', userController.getAllUsers);
-router.post('/',
+
+router.post(
+    '/',
     userMiddleware.checkIsEmailUnique,
     userMiddleware.isNewUserValid,
-    userController.createUser);
+    userController.createUser
+);
 
-router.get('/:userId',
+router.get(
+    '/:userId',
     userMiddleware.isUserIdValid,
     authMiddleware.checkAccessToken,
     userMiddleware.getUserDynamically('userId', 'params', '_id'),
-    userController.getUserById);
-router.put('/:userId',
+    userController.getUserById
+);
+
+router.put(
+    '/:userId',
     userMiddleware.isUserIdValid,
     userMiddleware.isEditUserValid,
     userMiddleware.getUserDynamically('userId', 'params', '_id'),
-    userController.updateUserById);
-router.delete('/:userId',
+    userController.updateUserById
+);
+
+router.delete(
+    '/:userId',
     userMiddleware.isUserIdValid,
     userMiddleware.getUserDynamically('userId', 'params', '_id'),
-    userController.deleteUserById);
+    userController.deleteUserById
+);
+
+router.patch(
+    '/:userId/avatar',
+    userMiddleware.isUserIdValid,
+    userMiddleware.getUserDynamically('userId', 'params', '_id'),
+    fileMdwr.checkUploadImage,
+    userController.uploadAvatar
+);
 
 module.exports = router;

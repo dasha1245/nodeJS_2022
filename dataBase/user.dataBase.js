@@ -6,11 +6,12 @@ const userSchema = new Schema({
     name: {type: String, required: true},
     age: {type: Number, default: 0},
     email: {type: String, trim: true, required: true, lowercase: true, unique: true},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    avatar: String
 }, {
     timestamps: true,
     toJSON: {virtuals: true},
-    toObject: {virtuals: true}
+    toObject: {virtuals: true},
 });
 
 userSchema.virtual('fullName').get(function (){

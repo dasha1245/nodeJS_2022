@@ -8,7 +8,6 @@ module.exports = {
 
     getOneByParams: async (filter  = {}) =>{
         return userDataBase.findOne(filter)
-
     },
 
     createNewUser: async (userInfo ='') => {

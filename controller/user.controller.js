@@ -1,3 +1,4 @@
+const s3Service = require('../service/s3.service');
 const userService = require('../service/user.service');
 
 module.exports = {
@@ -49,6 +50,20 @@ module.exports = {
             const updatedUser = await userService.updateUser(userId, updatedInfo)
             res.json(updatedUser)
 
+        } catch (e) {
+            next(e)
+        }
+    },
+    uploadAvatar: async (req, res, next) => {
+        try {
+            const {user:{_id}, files} = req;
+
+            const uploadedInfo = await s3Service.uploadPublicFile(files.Avatar, 'user', _id);
+
+            const updatedUser = await userService.updateUser(_id, {avatar: uploadedInfo.Location})
+
+
+            res.json('Successful uploading!')
         } catch (e) {
             next(e)
         }
